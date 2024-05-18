@@ -1,7 +1,7 @@
 package com.ayd2.library.service;
 
-import com.ayd2.library.dto.AuthReqDto;
-import com.ayd2.library.dto.JwtResDto;
+import com.ayd2.library.dto.AuthRequest;
+import com.ayd2.library.dto.JwtRequest;
 import com.ayd2.library.exception.LibraryException;
 import com.ayd2.library.service.jwt.JwtService;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +22,7 @@ public class AuthenticationService {
     private final UserDetailsService userDetailsService;
     private final JwtService jwtService;
 
-    public JwtResDto createToken(AuthReqDto reqDto) throws LibraryException {
+    public JwtRequest createToken(AuthRequest reqDto) throws LibraryException {
         var authData = new UsernamePasswordAuthenticationToken(reqDto.username(), reqDto.password());
 
         try {
@@ -30,7 +30,7 @@ public class AuthenticationService {
             if (authentication.isAuthenticated()) {
                 var userDetails = userDetailsService.loadUserByUsername(reqDto.username());
                 var token = jwtService.generateToken(userDetails);
-                return new JwtResDto(token);
+                return new JwtRequest(token);
             }
         } catch (IOException e) {
             log.error("Error:", e);

@@ -2,6 +2,7 @@ package com.ayd2.library.service;
 
 import com.ayd2.library.exception.LibraryException;
 import com.ayd2.library.repository.UserRepository;
+import com.ayd2.library.util.enums.RoleEnum;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.http.HttpStatus;
@@ -25,8 +26,8 @@ public class UserDetailServiceImpl implements UserDetailsService {
         var userOpt = userRepository.findByUsername(username);
         if (userOpt.isEmpty()) throw new LibraryException("user_by_username_not_found").status(HttpStatus.NOT_FOUND);
         var user = userOpt.get();
-        var role = user.isStudent()?"student":"librarian";
-        var authorities = Collections.singletonList(new SimpleGrantedAuthority(role));
+        var role = user.isStudent()? RoleEnum.LIBRARIAN : RoleEnum.STUDENT;
+        var authorities = Collections.singletonList(new SimpleGrantedAuthority(role.roleId));
         return new User(user.getUsername(), user.getPassword(), authorities);
     }
 }

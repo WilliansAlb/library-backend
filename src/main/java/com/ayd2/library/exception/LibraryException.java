@@ -8,7 +8,7 @@ public class LibraryException extends Exception {
 
     private HttpStatus status;
 
-    private LibraryException() {
+    public LibraryException() {
         this.status = HttpStatus.BAD_REQUEST;
     }
 

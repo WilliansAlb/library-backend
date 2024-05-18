@@ -1,7 +1,7 @@
 package com.ayd2.library.controller;
 
-import com.ayd2.library.dto.AuthReqDto;
-import com.ayd2.library.dto.JwtResDto;
+import com.ayd2.library.dto.AuthRequest;
+import com.ayd2.library.dto.JwtRequest;
 import com.ayd2.library.exception.LibraryException;
 import com.ayd2.library.service.AuthenticationService;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +20,7 @@ public class AuthenticationController {
     private final AuthenticationService authenticationService;
 
     @PostMapping
-    public ResponseEntity<JwtResDto> createToken(@RequestBody AuthReqDto reqDto) throws LibraryException {
+    public ResponseEntity<JwtRequest> createToken(@RequestBody AuthRequest reqDto) throws LibraryException {
         var token = authenticationService.createToken(reqDto);
         return new ResponseEntity<>(token, HttpStatus.OK);
     }
