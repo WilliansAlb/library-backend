@@ -24,18 +24,13 @@ public class AuthenticationService {
 
     public JwtRequest createToken(AuthRequest reqDto) throws LibraryException {
         var authData = new UsernamePasswordAuthenticationToken(reqDto.username(), reqDto.password());
-
-        try {
-            var authentication = authenticationManager.authenticate(authData);
-            if (authentication.isAuthenticated()) {
-                var userDetails = userDetailsService.loadUserByUsername(reqDto.username());
-                var token = jwtService.generateToken(userDetails);
-                return new JwtRequest(token);
-            }
-        } catch (IOException e) {
-            log.error("Error:", e);
+        var authentication = authenticationManager.authenticate(authData);
+        if (authentication.isAuthenticated()) {
+            var userDetails = userDetailsService.loadUserByUsername(reqDto.username());
+            var token = jwtService.generateToken(userDetails);
+            return new JwtRequest(token);
+        } else {
+            throw new LibraryException("invalid_user");
         }
-
-        throw new LibraryException("invalid_user");
     }
 }

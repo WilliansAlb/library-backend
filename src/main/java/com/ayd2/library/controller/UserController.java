@@ -2,7 +2,7 @@ package com.ayd2.library.controller;
 
 import com.ayd2.library.exception.LibraryException;
 import com.ayd2.library.model.UserLibrary;
-import com.ayd2.library.service.AdmUserService;
+import com.ayd2.library.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +21,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserController {
 
-    private final AdmUserService userService;
+    private final UserService userService;
 
     @GetMapping
     public ResponseEntity<List<UserLibrary>> findAll() {

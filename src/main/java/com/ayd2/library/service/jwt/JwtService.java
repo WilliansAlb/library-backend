@@ -1,6 +1,7 @@
 package com.ayd2.library.service.jwt;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -25,7 +26,7 @@ public class JwtService {
     @Value("${security.jwt.issuer}")
     private String ISSUER;
 
-    public String generateToken(UserDetails userDetails) throws IOException {
+    public String generateToken(UserDetails userDetails) {
         var authorities = userDetails.getAuthorities();
 
         return Jwts
@@ -45,9 +46,13 @@ public class JwtService {
     }
 
     public boolean isValid(String token) throws IOException {
-        var claims = extractClaims(token);
-        var expiration = claims.getExpiration();
-        return new Date().before(expiration);
+        try {
+            var claims = extractClaims(token);
+            var expiration = claims.getExpiration();
+            return new Date().before(expiration);
+        } catch (ExpiredJwtException expiredJwtException) {
+            return false;
+        }
     }
 
     private Claims extractClaims(String token) throws IOException {

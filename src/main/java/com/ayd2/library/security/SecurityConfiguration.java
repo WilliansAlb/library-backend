@@ -57,8 +57,11 @@ public class SecurityConfiguration {
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(
                         (requests) -> requests
-                                .requestMatchers("/auth", "/hello", "/users")
+                                .requestMatchers("/auth", "/hello")
                                 .permitAll()
+                                .requestMatchers("/users").hasAuthority(RoleEnum.LIBRARIAN.roleId)
+                                .anyRequest()
+                                .authenticated()
                 )
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)

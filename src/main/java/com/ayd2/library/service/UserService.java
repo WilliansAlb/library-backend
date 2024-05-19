@@ -15,7 +15,7 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class AdmUserService {
+public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -46,8 +46,8 @@ public class AdmUserService {
                 .status(HttpStatus.NOT_FOUND);
 
         if (!entity.getUserId().equals(userId)) throw new LibraryException("invalid_update");
-        var duplicatedEmail = userRepository.findDuplicatedByUsernameAndNotId(entity.getUsername(), userId);
-        if (duplicatedEmail.isPresent()) throw new LibraryException("username_already_exists");
+        var duplicatedUsername = userRepository.findDuplicatedByUsernameAndNotId(entity.getUsername(), userId);
+        if (duplicatedUsername.isPresent()) throw new LibraryException("username_already_exists");
 
         entity.setPassword(userOpt.get().getPassword());
         return userRepository.save(entity);

@@ -12,7 +12,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 public class LibraryExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(LibraryException.class)
-    public ResponseEntity<String> handleHtlException(LibraryException ex) {
+    public ResponseEntity<String> handleLibraryException(LibraryException ex) {
         return new ResponseEntity<>(ex.getMessage(), ex.getStatus());
     }
 
