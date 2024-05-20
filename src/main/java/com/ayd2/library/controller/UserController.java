@@ -1,6 +1,8 @@
 package com.ayd2.library.controller;
 
+import com.ayd2.library.dto.UserStudentRequest;
 import com.ayd2.library.exception.LibraryException;
+import com.ayd2.library.model.Student;
 import com.ayd2.library.model.UserLibrary;
 import com.ayd2.library.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -39,6 +41,11 @@ public class UserController {
     @PostMapping
     public ResponseEntity<UserLibrary> create(@RequestBody UserLibrary user) throws LibraryException {
         return new ResponseEntity<>(userService.create(user), HttpStatus.CREATED);
+    }
+
+    @PostMapping("/student")
+    public ResponseEntity<Student> create(@RequestBody UserStudentRequest user) throws LibraryException {
+        return new ResponseEntity<>(userService.createStudent(user), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")

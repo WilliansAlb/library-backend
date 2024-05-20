@@ -1,0 +1,2 @@
+ALTER TABLE Book
+    ADD COLUMN available_copies BIGINT NOT NULL DEFAULT 0;

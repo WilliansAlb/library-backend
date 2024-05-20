@@ -1,6 +1,9 @@
 package com.ayd2.library.service;
 
+import com.ayd2.library.dto.UserStudentRequest;
 import com.ayd2.library.exception.LibraryException;
+import com.ayd2.library.model.Career;
+import com.ayd2.library.model.Student;
 import com.ayd2.library.model.UserLibrary;
 import com.ayd2.library.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -10,6 +13,8 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.time.LocalDate;
+import java.time.Month;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -20,10 +25,16 @@ import static org.mockito.Mockito.*;
 public class UserServiceTest {
     public static final long ID_USER = 1L;
     public static final String USERNAME_USER = "testUser";
+    public static final String LICENSE_STUDENT = "201830221";
+    public static final String NAME_STUDENT = "testName";
+    public static final String NAME_CAREER = "testCareer";
+    public static final LocalDate BIRTHDAY = LocalDate.of(1998, Month.JULY, 21);
     public static final String PASSWORD_USER = "testPassword";
     public static final boolean IS_STUDENT = true;
     @Mock
     private UserRepository userRepository;
+    @Mock
+    private StudentService studentService;
 
     @Mock
     private PasswordEncoder passwordEncoder;
@@ -181,5 +192,58 @@ public class UserServiceTest {
 
         verify(userRepository).findById(ID_USER);
         verify(userRepository).findDuplicatedByUsernameAndNotId(USERNAME_USER, ID_USER);
+    }
+
+    @Test
+    public void testCreateStudent_studentExists() throws LibraryException {
+        // Arrange
+        UserStudentRequest request = new UserStudentRequest();
+        request.setLicense("license");
+        request.setName("name");
+        request.setBirthday(BIRTHDAY);
+        request.setUsername("username");
+        request.setPassword("password");
+
+        Student student = new Student();
+        UserLibrary userLibrary = new UserLibrary();
+        student.setUserLibrary(userLibrary);
+
+        when(studentService.findByLicenseAndNameAndBirthday(request.getLicense(), request.getName(), request.getBirthday()))
+                .thenReturn(Optional.of(student));
+        when(studentService.saveStudent(any(Student.class))).thenReturn(student);
+
+        // Act
+        Student result = userService.createStudent(request);
+
+        // Assert
+        assertNotNull(result);
+        assertTrue(result.getUserLibrary().isStudent());
+        assertEquals("username", result.getUserLibrary().getUsername());
+        assertNull(result.getUserLibrary().getPassword());
+
+        verify(studentService).findByLicenseAndNameAndBirthday(request.getLicense(), request.getName(), request.getBirthday());
+        verify(studentService).saveStudent(student);
+    }
+
+    @Test
+    public void testCreateStudent_studentDoesNotExist() {
+        // Arrange
+        UserStudentRequest request = new UserStudentRequest();
+        request.setLicense("license");
+        request.setName("name");
+        request.setBirthday(BIRTHDAY);
+
+        when(studentService.findByLicenseAndNameAndBirthday(request.getLicense(), request.getName(), request.getBirthday()))
+                .thenReturn(Optional.empty());
+
+        // Act & Assert
+        LibraryException exception = assertThrows(LibraryException.class, () -> {
+            userService.createStudent(request);
+        });
+
+        assertEquals("student_doesnt_exist", exception.getMessage());
+
+        verify(studentService).findByLicenseAndNameAndBirthday(request.getLicense(), request.getName(), request.getBirthday());
+        verify(studentService, never()).saveStudent(any(Student.class));
     }
 }

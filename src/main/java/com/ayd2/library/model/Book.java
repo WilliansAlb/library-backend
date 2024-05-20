@@ -34,6 +34,9 @@ public class Book {
     @Column(name = "copies")
     private int copies;
 
+    @Column(name = "available_copies")
+    private int availableCopies;
+
     @Column(name = "front_cover")
     private String frontCover;
 

@@ -40,6 +40,12 @@ public class BookService {
         return bookRepository.findAll();
     }
 
+    public List<Book> filterBooks(String search) {
+        return bookRepository.findByTitleContainingIgnoreCaseOrAuthorContainingIgnoreCaseOrPublisherContainingIgnoreCaseOrIsbnContainingIgnoreCase(
+                search, search, search, search
+        );
+    }
+
     public Book createBook(Book toCreate) throws LibraryException{
         if (!isAIsbnValid(toCreate.getIsbn())){
             throw new LibraryException("bad_isbn_form");
@@ -51,6 +57,7 @@ public class BookService {
         if (bookSaved.isPresent()) {
             throw new LibraryException("book_exists");
         }
+        toCreate.setAvailableCopies(toCreate.getCopies());
         return bookRepository.save(toCreate);
     }
 
@@ -65,6 +72,7 @@ public class BookService {
         if (bookSaved.isEmpty()){
             throw new LibraryException("book_doesnt_exist");
         }
+        toUpdate.setAvailableCopies(bookSaved.get().getAvailableCopies() + (toUpdate.getCopies() - bookSaved.get().getCopies()));
         return bookRepository.save(toUpdate);
     }
 }

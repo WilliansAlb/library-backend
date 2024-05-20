@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -21,7 +22,7 @@ public class BookServiceTest {
     public static final String ISBN_CORRECT = "123-ABC";
     public static final String ANOTHER_ISBN_CORRECT = "123-BCD";
     public static final String ISBN_INCORRECT = "123-123-123-ABCD";
-    public static final String AUTHOR = "Gabriel Garcia Marquez";
+    public static final String FILTER_WORD = "testWord";
 
     @Mock
     private BookRepository bookRepository;
@@ -71,6 +72,16 @@ public class BookServiceTest {
         when(bookRepository.findAll()).thenReturn(new ArrayList<>());
 
         List<Book> bookList = bookService.findAllBooks();
+
+        assertNotNull(bookList);
+    }
+
+    @Test
+    void testFilterBooks() {
+        when(bookRepository.findByTitleContainingIgnoreCaseOrAuthorContainingIgnoreCaseOrPublisherContainingIgnoreCaseOrIsbnContainingIgnoreCase(anyString(),anyString(),anyString(),anyString())).
+                thenReturn(new ArrayList<>());
+
+        List<Book> bookList = bookService.filterBooks(FILTER_WORD);
 
         assertNotNull(bookList);
     }

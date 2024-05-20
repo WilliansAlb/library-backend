@@ -1,6 +1,8 @@
 package com.ayd2.library.service;
 
+import com.ayd2.library.dto.UserStudentRequest;
 import com.ayd2.library.exception.LibraryException;
+import com.ayd2.library.model.Student;
 import com.ayd2.library.model.UserLibrary;
 import com.ayd2.library.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +20,7 @@ import java.util.Optional;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final StudentService studentService;
     private final PasswordEncoder passwordEncoder;
 
     public Optional<UserLibrary> findById(Long userId) {
@@ -38,6 +41,19 @@ public class UserService {
         if (userByUsername.isPresent()) throw new LibraryException("username_already_exists");
         entity.setPassword(passwordEncoder.encode(entity.getPassword()));
         return userRepository.save(entity);
+    }
+
+    public Student createStudent(UserStudentRequest userStudentRequest) throws LibraryException{
+        Optional<Student> student = studentService.findByLicenseAndNameAndBirthday(userStudentRequest.getLicense(), userStudentRequest.getName(), userStudentRequest.getBirthday());
+        if (student.isEmpty()) throw new LibraryException("student_doesnt_exist");
+        UserLibrary userLibrary = new UserLibrary();
+        userLibrary.setStudent(true);
+        userLibrary.setUsername(userStudentRequest.getUsername());
+        userLibrary.setPassword(userStudentRequest.getPassword());
+        userLibrary = create(userLibrary);
+        student.get().setUserLibrary(userLibrary);
+        Student created = studentService.saveStudent(student.get());
+        return created;
     }
 
     public UserLibrary update(Long userId, UserLibrary entity) throws LibraryException {
