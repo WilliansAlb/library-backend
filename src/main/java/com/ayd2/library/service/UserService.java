@@ -53,6 +53,7 @@ public class UserService {
         userLibrary = create(userLibrary);
         student.get().setUserLibrary(userLibrary);
         Student created = studentService.saveStudent(student.get());
+        created.getUserLibrary().setPassword(null);
         return created;
     }
 
@@ -67,5 +68,13 @@ public class UserService {
 
         entity.setPassword(userOpt.get().getPassword());
         return userRepository.save(entity);
+    }
+
+    public Student findStudentByUsername(String username) throws LibraryException {
+        Optional<UserLibrary> userLibrary = userRepository.findByUsername(username);
+        if (userLibrary.isEmpty()) throw new LibraryException("The user doesnt exist!");
+        Optional<Student> student = studentService.findByUserLibrary(userLibrary.get());
+        if (student.isEmpty()) throw new LibraryException("The student doesnt exist!");
+        return student.get();
     }
 }

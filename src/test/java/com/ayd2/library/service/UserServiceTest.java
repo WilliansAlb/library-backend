@@ -195,38 +195,41 @@ public class UserServiceTest {
     }
 
     @Test
-    public void testCreateStudent_studentExists() throws LibraryException {
+    public void testCreateStudentSuccessfully() throws LibraryException {
         // Arrange
         UserStudentRequest request = new UserStudentRequest();
-        request.setLicense("license");
-        request.setName("name");
+        request.setLicense(LICENSE_STUDENT);
+        request.setName(NAME_STUDENT);
         request.setBirthday(BIRTHDAY);
-        request.setUsername("username");
-        request.setPassword("password");
-
         Student student = new Student();
+        student.setLicense(LICENSE_STUDENT);
+        student.setName(NAME_STUDENT);
+        student.setBirthday(BIRTHDAY);
+        student.setUserLibrary(null);
         UserLibrary userLibrary = new UserLibrary();
-        student.setUserLibrary(userLibrary);
+        userLibrary.setStudent(true);
+        userLibrary.setUsername(USERNAME_USER);
+        userLibrary.setPassword(PASSWORD_USER);
+        Student created = new Student();
+        created.setLicense(LICENSE_STUDENT);
+        created.setName(NAME_STUDENT);
+        created.setBirthday(BIRTHDAY);
+        created.setUserLibrary(userLibrary);
 
         when(studentService.findByLicenseAndNameAndBirthday(request.getLicense(), request.getName(), request.getBirthday()))
                 .thenReturn(Optional.of(student));
-        when(studentService.saveStudent(any(Student.class))).thenReturn(student);
+        when(userRepository.findByUsername(USERNAME_USER)).thenReturn(Optional.empty());
+        when(userRepository.save(any(UserLibrary.class))).thenReturn(userLibrary);
+        when(studentService.saveStudent(student)).thenReturn(created);
 
-        // Act
-        Student result = userService.createStudent(request);
+        Student tested = userService.createStudent(request);
 
-        // Assert
-        assertNotNull(result);
-        assertTrue(result.getUserLibrary().isStudent());
-        assertEquals("username", result.getUserLibrary().getUsername());
-        assertNull(result.getUserLibrary().getPassword());
-
-        verify(studentService).findByLicenseAndNameAndBirthday(request.getLicense(), request.getName(), request.getBirthday());
-        verify(studentService).saveStudent(student);
+        assertNull(tested.getUserLibrary().getPassword());
+        assertTrue(tested.getUserLibrary().isStudent());
     }
 
     @Test
-    public void testCreateStudent_studentDoesNotExist() {
+    public void testCreateStudentNotExistException() {
         // Arrange
         UserStudentRequest request = new UserStudentRequest();
         request.setLicense("license");

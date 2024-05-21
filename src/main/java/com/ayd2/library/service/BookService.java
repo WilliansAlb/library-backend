@@ -22,7 +22,6 @@ public class BookService {
 
     public Optional<Book> findByISBN(String isbn) throws LibraryException {
         if (isAIsbnValid(isbn)){
-            isbn = isbn.replaceAll("-","");
             return bookRepository.findByIsbn(isbn);
         } else {
             throw new LibraryException("bad_isbn_form");
@@ -74,5 +73,9 @@ public class BookService {
         }
         toUpdate.setAvailableCopies(bookSaved.get().getAvailableCopies() + (toUpdate.getCopies() - bookSaved.get().getCopies()));
         return bookRepository.save(toUpdate);
+    }
+
+    public Book saveChangesBook(Book toSave){
+        return bookRepository.save(toSave);
     }
 }

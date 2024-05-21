@@ -25,6 +25,10 @@ public class CareerService {
         return careerRepository.findByNameContainingIgnoreCase(search);
     }
 
+    public Optional<Career> findById(Long careerId) {
+        return careerRepository.findById(careerId);
+    }
+
     public Career saveCareer(Career toCreate) throws LibraryException {
         Optional<Career> saved = careerRepository.findById(toCreate.getCareerId());
         if (saved.isPresent()) throw new LibraryException("career_id_exists");

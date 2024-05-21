@@ -1,6 +1,8 @@
 package com.ayd2.library.controller;
 
+import com.ayd2.library.dto.UserStudentRequest;
 import com.ayd2.library.exception.LibraryException;
+import com.ayd2.library.model.Student;
 import com.ayd2.library.model.UserLibrary;
 import com.ayd2.library.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,6 +21,10 @@ import static org.mockito.Mockito.*;
 
 class UserControllerTest {
 
+    public static final String USERNAME_USER = "williansAlb";
+    public static final String LICENSE_STUDENT = "201830221";
+    public static final String PASSWORD_USER = "testPassword";
+    public static final String NAME_STUDENT = "Willians Alberto Orozco";
     @Mock
     private UserService userService;
 
@@ -86,5 +92,24 @@ class UserControllerTest {
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertEquals(user, response.getBody());
         verify(userService, times(1)).update(1L, user);
+    }
+
+    @Test
+    void testCreateStudent() throws LibraryException {
+        Student returned = new Student();
+        returned.setName(NAME_STUDENT);
+        returned.setLicense(LICENSE_STUDENT);
+        UserStudentRequest request = new UserStudentRequest();
+        request.setUsername(USERNAME_USER);
+        request.setName(NAME_STUDENT);
+        request.setPassword(PASSWORD_USER);
+        request.setLicense(LICENSE_STUDENT);
+        when(userService.createStudent(request)).thenReturn(returned);
+
+        ResponseEntity<Student> response = userController.create(request);
+
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        assertEquals(returned, response.getBody());
+        verify(userService, times(1)).createStudent(request);
     }
 }

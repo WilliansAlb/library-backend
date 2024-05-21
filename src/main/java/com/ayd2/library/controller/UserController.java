@@ -8,13 +8,7 @@ import com.ayd2.library.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -52,5 +46,12 @@ public class UserController {
     public ResponseEntity<UserLibrary> update(@PathVariable("id") Long userId, @RequestBody UserLibrary entity) throws LibraryException {
         var updatedUser = userService.update(userId, entity);
         return new ResponseEntity<>(updatedUser, HttpStatus.OK);
+    }
+
+    @GetMapping("/student")
+    public ResponseEntity<Student> findStudentByLicense(
+            @RequestParam("username") String username
+    ) throws LibraryException {
+        return new ResponseEntity<>(userService.findStudentByUsername(username), HttpStatus.OK);
     }
 }

@@ -26,7 +26,7 @@ public class UserDetailServiceImpl implements UserDetailsService {
         var userOpt = userRepository.findByUsername(username);
         if (userOpt.isEmpty()) throw new LibraryException("user_by_username_not_found").status(HttpStatus.NOT_FOUND);
         var user = userOpt.get();
-        var role = user.isStudent()? RoleEnum.LIBRARIAN : RoleEnum.STUDENT;
+        var role = user.isStudent()? RoleEnum.STUDENT : RoleEnum.LIBRARIAN;
         var authorities = Collections.singletonList(new SimpleGrantedAuthority(role.roleId));
         return new User(user.getUsername(), user.getPassword(), authorities);
     }

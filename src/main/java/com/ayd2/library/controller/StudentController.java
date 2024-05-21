@@ -6,10 +6,7 @@ import com.ayd2.library.service.StudentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -22,14 +19,24 @@ public class StudentController {
 
     @GetMapping
     public ResponseEntity<List<Student>> getAllCareers(){
-        List<Student> studentList = studentService.findAllStudents();
-        return new ResponseEntity<>(studentList, HttpStatus.OK);
+        return new ResponseEntity<>(studentService.findAllStudents(), HttpStatus.OK);
     }
 
     @GetMapping("/hasPendingInvitation/{license}")
     public ResponseEntity<Boolean> hasPendingInvitation(@PathVariable("license") String license) throws LibraryException {
-        Optional<Student> student = studentService.findByLicense(license);
-        if (student.isEmpty()) throw new LibraryException("student_doesnt_exists");
-        return new ResponseEntity<>(student.get().getUserLibrary()==null, HttpStatus.OK);
+        return new ResponseEntity<>(studentService.hasPendingInvitation(license), HttpStatus.OK);
+    }
+
+    @PostMapping
+    public ResponseEntity<Student> createStudent(@RequestBody Student toCreate) throws LibraryException {
+        return new ResponseEntity<>(studentService.createStudent(toCreate), HttpStatus.CREATED);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<Student>> searchByWordAndFilterByCareer(
+            @RequestParam("search") String search,
+            @RequestParam("careerId") Long careerId
+    ){
+        return new ResponseEntity<>(studentService.filterStudent(search, careerId), HttpStatus.OK);
     }
 }
