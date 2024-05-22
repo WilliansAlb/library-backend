@@ -205,4 +205,33 @@ public class BookServiceTest {
 
         verify(bookRepository).findByIsbn(ISBN_CORRECT);
     }
+
+    @Test
+    void testSaveChangesBook(){
+        Book toSave = new Book();
+        toSave.setIsbn(ISBN_CORRECT);
+        when(bookRepository.save(toSave)).thenReturn(toSave);
+
+        Book tested = bookService.saveChangesBook(toSave);
+
+        assertEquals(toSave, tested);
+    }
+
+    @Test
+    void testFindByAvailableCopies(){
+        when(bookRepository.findByAvailableCopies(0)).thenReturn(new ArrayList<>());
+
+        List<Book> tested = bookService.findByAvailableCopies();
+
+        assertEquals(0, tested.size());
+    }
+
+    @Test
+    void testBooksNeverLended(){
+        when(bookRepository.booksNeverLended()).thenReturn(new ArrayList<>());
+
+        List<Book> tested = bookService.booksNeverLended();
+
+        assertEquals(0, tested.size());
+    }
 }

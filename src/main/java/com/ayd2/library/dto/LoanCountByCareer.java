@@ -1,5 +1,6 @@
-package com.ayd2.library.model;
+package com.ayd2.library.dto;
 
+import com.ayd2.library.model.Career;
 import lombok.Getter;
 import lombok.Setter;
 

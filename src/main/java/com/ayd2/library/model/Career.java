@@ -9,11 +9,19 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Career {
-
     @Id
     @Column(name = "career_id")
     private Long careerId;
 
     @Column(name = "name")
     private String name;
+
+    public Career(Long careerId, String name){
+        this.careerId = careerId;
+        this.name = name;
+    }
+
+    public Career(){
+
+    }
 }

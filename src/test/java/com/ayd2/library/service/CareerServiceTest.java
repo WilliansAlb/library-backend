@@ -21,6 +21,7 @@ public class CareerServiceTest
 {
     public static final String SEARCH_WORD = "search";
     public static final String CAREER_NAME = "Profesorado de Enseñanza Media";
+    public static final long CAREER_ID = 58L;
     @Mock
     private CareerRepository careerRepository;
 
@@ -180,5 +181,14 @@ public class CareerServiceTest
         });
 
         assertEquals("career_id_exists", libraryException.getMessage());
+    }
+
+    @Test
+    void testFindByIdSuccessfully(){
+        when(careerRepository.findById(CAREER_ID)).thenReturn(Optional.empty());
+
+        Optional<Career> tested = careerService.findById(CAREER_ID);
+
+        assertNotNull(tested);
     }
 }

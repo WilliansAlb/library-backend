@@ -45,11 +45,11 @@ public class StudentService {
     }
 
     public Student createStudent(Student toCreate) throws LibraryException {
-        if (!LibraryConstant.isNumber(toCreate.getLicense())) throw new LibraryException("bad_form_license");
-        if (findByLicense(toCreate.getLicense()).isPresent()) throw new LibraryException("student_exists");
-        if (toCreate.getCareer()==null) throw new LibraryException("missing_career");
+        if (!LibraryConstant.isNumber(toCreate.getLicense())) throw new LibraryException("Not valid form for license");
+        if (findByLicense(toCreate.getLicense()).isPresent()) throw new LibraryException("The student exists");
+        if (toCreate.getCareer()==null) throw new LibraryException("Missing the career");
         Optional<Career> careerSaved = careerService.findById(toCreate.getCareer().getCareerId());
-        if (careerSaved.isEmpty()) throw new LibraryException("career_doesnt_exists");
+        if (careerSaved.isEmpty()) throw new LibraryException("The career doesnt exists");
         toCreate.setUserLibrary(null);
         return studentRepository.save(toCreate);
     }

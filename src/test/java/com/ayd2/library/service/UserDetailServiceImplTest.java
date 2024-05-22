@@ -62,7 +62,7 @@ class UserDetailServiceImplTest {
         assertNotNull(userDetails);
         assertEquals(username, userDetails.getUsername());
         assertEquals("password", userDetails.getPassword());
-        assertTrue(userDetails.getAuthorities().stream().anyMatch(auth -> auth.getAuthority().equals(RoleEnum.LIBRARIAN.roleId)));
+        assertTrue(userDetails.getAuthorities().stream().anyMatch(auth -> auth.getAuthority().equals(RoleEnum.STUDENT.roleId)));
 
         verify(userRepository, times(1)).findByUsername(username);
     }
@@ -82,7 +82,7 @@ class UserDetailServiceImplTest {
         assertNotNull(userDetails);
         assertEquals(username, userDetails.getUsername());
         assertEquals("password", userDetails.getPassword());
-        assertTrue(userDetails.getAuthorities().stream().anyMatch(auth -> auth.getAuthority().equals(RoleEnum.STUDENT.roleId)));
+        assertTrue(userDetails.getAuthorities().stream().anyMatch(auth -> auth.getAuthority().equals(RoleEnum.LIBRARIAN.roleId)));
 
         verify(userRepository, times(1)).findByUsername(username);
     }

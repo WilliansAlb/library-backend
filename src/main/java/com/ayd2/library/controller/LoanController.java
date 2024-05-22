@@ -1,9 +1,6 @@
 package com.ayd2.library.controller;
 
-import com.ayd2.library.dto.BalanceLoanRequest;
-import com.ayd2.library.dto.BalanceLoanResponse;
-import com.ayd2.library.dto.LoanStudentRequest;
-import com.ayd2.library.dto.LoanStudentResponse;
+import com.ayd2.library.dto.*;
 import com.ayd2.library.exception.LibraryException;
 import com.ayd2.library.model.Loan;
 import com.ayd2.library.model.Student;
@@ -45,5 +42,12 @@ public class LoanController {
             @RequestParam("todayDate") LocalDate todayDate
     ) throws LibraryException {
         return new ResponseEntity<>(loanService.getBalanceLoanResponse(loanId, todayDate), HttpStatus.OK);
+    }
+
+    @PutMapping
+    public ResponseEntity<Loan> payLoan(
+            @RequestBody PayLoanRequest request
+    ) throws LibraryException {
+        return new ResponseEntity<>(loanService.payLoan(request), HttpStatus.OK);
     }
 }

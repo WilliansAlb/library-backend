@@ -78,4 +78,12 @@ public class BookService {
     public Book saveChangesBook(Book toSave){
         return bookRepository.save(toSave);
     }
+
+    public List<Book> findByAvailableCopies(){
+        return bookRepository.findByAvailableCopies(0);
+    }
+
+    public List<Book> booksNeverLended() {
+        return bookRepository.booksNeverLended();
+    }
 }

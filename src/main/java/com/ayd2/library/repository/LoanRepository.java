@@ -1,9 +1,10 @@
 package com.ayd2.library.repository;
 
+import com.ayd2.library.dto.LoanCountByStudent;
 import com.ayd2.library.model.Career;
 import com.ayd2.library.model.Loan;
+import com.ayd2.library.dto.LoanCountByCareer;
 import com.ayd2.library.model.Student;
-import org.springframework.cglib.core.Local;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -16,17 +17,17 @@ public interface LoanRepository extends JpaRepository<Loan, Long> {
 
     List<Loan> findAllByStudentAndReturnDateNull(Student student);
 
-    List<Loan> findAllByStudentAndLatePaymentNotNullAndLoanDateBetween(Student student, LocalDate startDate, LocalDate endDate);
+    List<Loan> findAllByStudentAndLatePaymentNotNullAndReturnDateBetween(Student student, LocalDate startDate, LocalDate endDate);
 
     List<Loan> findAllByStudentCareerAndLoanDateBetween(Career student_career, LocalDate startDate, LocalDate endDate);
 
-    @Query("SELECT new com.ayd2.library.model.LoanCountByCareer(COUNT(loan.loanId), loan.student.career) " +
+    @Query("SELECT new com.ayd2.library.dto.LoanCountByCareer(COUNT(loan.loanId), loan.student.career) " +
             "FROM Loan loan " +
             "WHERE loan.loanDate " +
             "BETWEEN :startDate AND :endDate " +
             "GROUP BY loan.student.career " +
             "ORDER BY COUNT(loan.loanId) DESC")
-    List<Loan> getCareerTopLoans(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
+    List<LoanCountByCareer> getCareerTopLoans(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 
     List<Loan> findAllByExpectedDateAndReturnDateNull(LocalDate todayDate);
 
@@ -50,4 +51,22 @@ public interface LoanRepository extends JpaRepository<Loan, Long> {
             "WHERE l.student = :license AND " +
             "(:todayDate - l.expected_date) > 30 AND l.return_date IS NULL", nativeQuery = true)
     List<Loan> listOverdueLoans(@Param("license") String license, @Param("todayDate") LocalDate todayDate);
+
+    @Query(value = "SELECT * From loan l " +
+            "WHERE l.expected_date < :todayDate  AND l.return_date IS NULL", nativeQuery = true)
+    List<Loan> listLateLoans(@Param("todayDate") LocalDate todayDate);
+
+    @Query("SELECT new com.ayd2.library.dto.LoanCountByStudent(COUNT(loan.loanId), loan.student) " +
+            "FROM Loan loan " +
+            "WHERE loan.loanDate " +
+            "BETWEEN :startDate AND :endDate " +
+            "GROUP BY loan.student " +
+            "ORDER BY COUNT(loan.loanId) DESC")
+    List<LoanCountByStudent> topStudent(
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate);
+
+    @Query(value = "SELECT * From loan l " +
+            "WHERE (:todayDate - l.expected_date) > 30 AND l.return_date IS NULL", nativeQuery = true)
+    List<Loan> loansWithOverdue(@Param("todayDate") LocalDate todayDate);
 }

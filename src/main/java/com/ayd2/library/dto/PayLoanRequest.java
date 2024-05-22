@@ -8,7 +8,7 @@ import java.time.LocalDate;
 
 @Getter
 @Setter
-public class BalanceLoanRequest {
-    private Loan loan;
+public class PayLoanRequest {
+    private Loan toPay;
     private LocalDate todayDate;
 }

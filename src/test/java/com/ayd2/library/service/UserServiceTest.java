@@ -249,4 +249,57 @@ public class UserServiceTest {
         verify(studentService).findByLicenseAndNameAndBirthday(request.getLicense(), request.getName(), request.getBirthday());
         verify(studentService, never()).saveStudent(any(Student.class));
     }
+
+    @Test
+    void testFindStudentByUsernameSuccessfully() throws LibraryException {
+        UserLibrary userLibrary = new UserLibrary();
+        userLibrary.setUsername(USERNAME_USER);
+        Student student = new Student();
+        student.setLicense(LICENSE_STUDENT);
+        when(userRepository.findByUsername(USERNAME_USER)).thenReturn(Optional.of(userLibrary));
+        when(studentService.findByUserLibrary(userLibrary)).thenReturn(Optional.of(student));
+
+        Student tested = userService.findStudentByUsername(USERNAME_USER);
+
+        assertEquals(student, tested);
+
+        verify(studentService).findByUserLibrary(userLibrary);
+        verify(userRepository).findByUsername(USERNAME_USER);
+    }
+
+    @Test
+    void testFindStudentByUsernameUserDoesntExistException() {
+        UserLibrary userLibrary = new UserLibrary();
+        userLibrary.setUsername(USERNAME_USER);
+        Student student = new Student();
+        student.setLicense(LICENSE_STUDENT);
+        when(userRepository.findByUsername(USERNAME_USER)).thenReturn(Optional.empty());
+
+        LibraryException libraryException = assertThrows(LibraryException.class, () -> {
+            userService.findStudentByUsername(USERNAME_USER);
+        });
+
+        assertEquals("The user doesnt exist!", libraryException.getMessage());
+
+        verify(userRepository).findByUsername(USERNAME_USER);
+    }
+
+    @Test
+    void testFindStudentByUsernameStudentDoesntExistsException() {
+        UserLibrary userLibrary = new UserLibrary();
+        userLibrary.setUsername(USERNAME_USER);
+        Student student = new Student();
+        student.setLicense(LICENSE_STUDENT);
+        when(userRepository.findByUsername(USERNAME_USER)).thenReturn(Optional.of(userLibrary));
+        when(studentService.findByUserLibrary(userLibrary)).thenReturn(Optional.empty());
+
+        LibraryException libraryException = assertThrows(LibraryException.class, () -> {
+            userService.findStudentByUsername(USERNAME_USER);
+        });
+
+        assertEquals("The student doesnt exist!", libraryException.getMessage());
+
+        verify(studentService).findByUserLibrary(userLibrary);
+        verify(userRepository).findByUsername(USERNAME_USER);
+    }
 }

@@ -31,4 +31,14 @@ public class Student {
     @JsonFormat(pattern = LibraryConstant.DATE_FORMAT, shape = JsonFormat.Shape.STRING)
     @Column(name = "birthday")
     private LocalDate birthday;
+
+    public Student(String license, Career career, String name){
+        this.license = license;
+        this.career = career;
+        this.name = name;
+    }
+
+    public Student(){
+
+    }
 }
